@@ -7,9 +7,9 @@ import (
 	"github.com/pvotal-tech/go-uof-sdk"
 )
 
-// Number of concurent api calls of one type. For example: no more than x
+// Number of concurrent api calls of one type. For example: no more than x
 // running Player api calls in any point in time.
-const ConcurentAPICallsLimit = 16
+const ConcurrentAPICallsLimit = 32
 
 // What is a pipeline?
 // There's no formal definition of a pipeline in Go; it's just one of many kinds

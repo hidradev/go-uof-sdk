@@ -30,10 +30,10 @@ func Fixture(api fixtureAPI, languages []uof.Lang, preloadTo time.Time) InnerSta
 	f := &fixture{
 		api:       api,
 		languages: languages,
-		em:        newExpireMap(time.Minute),
+		em:        newExpireMap(time.Second * 30),
 		//requests:  make(map[string]time.Time),
 		subProcs:  &sync.WaitGroup{},
-		rateLimit: make(chan struct{}, ConcurentAPICallsLimit),
+		rateLimit: make(chan struct{}, ConcurrentAPICallsLimit),
 		preloadTo: preloadTo,
 	}
 	return StageWithSubProcessesSync(f.loop)

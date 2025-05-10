@@ -28,7 +28,7 @@ func Player(api playerAPI, languages []uof.Lang, concurrentFetch bool) InnerStag
 		languages:       languages,
 		em:              newExpireMap(time.Hour),
 		subProcs:        &sync.WaitGroup{},
-		rateLimit:       make(chan struct{}, ConcurentAPICallsLimit),
+		rateLimit:       make(chan struct{}, ConcurrentAPICallsLimit),
 		concurrentFetch: concurrentFetch,
 	}
 	return StageWithSubProcessesSync(p.loop)

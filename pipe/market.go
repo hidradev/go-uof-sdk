@@ -31,7 +31,7 @@ func Markets(api marketsAPI, languages []uof.Lang) InnerStage {
 		languages: languages,
 		em:        newExpireMap(24 * time.Hour),
 		subProcs:  &wg,
-		rateLimit: make(chan struct{}, ConcurentAPICallsLimit),
+		rateLimit: make(chan struct{}, ConcurrentAPICallsLimit),
 	}
 	return StageWithSubProcessesSync(m.loop)
 }
