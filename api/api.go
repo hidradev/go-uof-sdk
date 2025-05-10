@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
-	"github.com/pvotal-tech/go-uof-sdk"
+	"github.com/hidradev/go-uof-sdk"
 )
 
 const (

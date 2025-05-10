@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pvotal-tech/go-uof-sdk"
+	"github.com/hidradev/go-uof-sdk"
 )
 
 type marketsAPI interface {

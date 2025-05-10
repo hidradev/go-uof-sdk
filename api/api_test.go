@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pvotal-tech/go-uof-sdk"
+	"github.com/hidradev/go-uof-sdk"
 	"github.com/stretchr/testify/assert"
 )
 

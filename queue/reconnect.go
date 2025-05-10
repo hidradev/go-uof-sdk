@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/cenkalti/backoff/v3"
+	"github.com/hidradev/go-uof-sdk"
 	"github.com/pkg/errors"
-	"github.com/pvotal-tech/go-uof-sdk"
 )
 
 var (

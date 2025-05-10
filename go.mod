@@ -1,4 +1,4 @@
-module github.com/pvotal-tech/go-uof-sdk
+module github.com/hidradev/go-uof-sdk
 
 go 1.20
 

@@ -12,7 +12,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/pvotal-tech/go-uof-sdk"
+	"github.com/hidradev/go-uof-sdk"
 	amqp "github.com/rabbitmq/amqp091-go"
 	log "github.com/sirupsen/logrus"
 )

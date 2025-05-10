@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/pvotal-tech/go-uof-sdk"
-	"github.com/pvotal-tech/go-uof-sdk/api"
-	"github.com/pvotal-tech/go-uof-sdk/pipe"
-	"github.com/pvotal-tech/go-uof-sdk/queue"
+	"github.com/hidradev/go-uof-sdk"
+	"github.com/hidradev/go-uof-sdk/api"
+	"github.com/hidradev/go-uof-sdk/pipe"
+	"github.com/hidradev/go-uof-sdk/queue"
 )
 
 var defaultLanguages = uof.Languages("en,de")

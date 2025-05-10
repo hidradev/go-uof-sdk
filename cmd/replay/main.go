@@ -12,10 +12,10 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 
-	"github.com/pvotal-tech/go-uof-sdk"
-	"github.com/pvotal-tech/go-uof-sdk/api"
-	"github.com/pvotal-tech/go-uof-sdk/pipe"
-	"github.com/pvotal-tech/go-uof-sdk/sdk"
+	"github.com/hidradev/go-uof-sdk"
+	"github.com/hidradev/go-uof-sdk/api"
+	"github.com/hidradev/go-uof-sdk/pipe"
+	"github.com/hidradev/go-uof-sdk/sdk"
 )
 
 func env(name string) string {

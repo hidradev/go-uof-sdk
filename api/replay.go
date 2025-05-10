@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 
-	"github.com/pvotal-tech/go-uof-sdk"
+	"github.com/hidradev/go-uof-sdk"
 )
 
 // replay api paths

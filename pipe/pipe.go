@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pvotal-tech/go-uof-sdk"
+	"github.com/hidradev/go-uof-sdk"
 )
 
 // Number of concurrent api calls of one type. For example: no more than x

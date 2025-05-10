@@ -8,7 +8,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/pvotal-tech/go-uof-sdk"
+	"github.com/hidradev/go-uof-sdk"
 )
 
 func InnerFileStore(root string) InnerStage {
