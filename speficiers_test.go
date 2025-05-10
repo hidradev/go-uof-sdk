@@ -142,7 +142,7 @@ func TestParseNameWithSpecifiers(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
-			actual, err := ParseSpecifiers(tc.name, tc.specifiers, players, fixture)
+			actual, err := ParseSpecifiers(tc.name, tc.specifiers, players.ToCloneMap(), fixture)
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expected, actual)
 		})

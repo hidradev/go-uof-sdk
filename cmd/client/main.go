@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/pvotal-tech/go-uof-sdk"
-	"github.com/pvotal-tech/go-uof-sdk/sdk"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
@@ -15,6 +13,9 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/pvotal-tech/go-uof-sdk"
+	"github.com/pvotal-tech/go-uof-sdk/sdk"
 )
 
 const (
@@ -67,7 +68,7 @@ func main() {
 		sdk.Credentials(123456, "token_goes_here", 123),
 		sdk.Staging(),
 		sdk.Recovery(pc),
-		sdk.ConfigThrottle(true),
+		sdk.ConfigThrottle(true, 0),
 		//sdk.Fixtures(preloadTo),
 		sdk.Languages(uof.Languages("en")),
 		//sdk.BufferedConsumer(pipe.FileStore("./tmp"), 1024),
@@ -89,7 +90,7 @@ func logMessages(in <-chan *uof.Message) error {
 
 func processMessage(m *uof.Message) {
 	var pendingCount, p, requestID, sport string
-	if m.External {
+	if !m.IsFromAMQP() {
 		pendingCount = fmt.Sprintf("pending=%d", m.PendingMsgCount)
 		p = fmt.Sprintf("producer=%s", m.Producer.Code())
 		if m.Type == uof.MessageTypeBetSettlement {
@@ -107,7 +108,7 @@ func processMessage(m *uof.Message) {
 	}
 	fmt.Printf("%-60s %-20s %-20s %-20s %-20s %-20s\n", time.Now().String(), m.Type, pendingCount, p, requestID, sport)
 	time.Sleep(time.Millisecond * 200)
-	return
+
 	switch m.Type {
 	case uof.MessageTypeConnection:
 		fmt.Printf("%-25s status: %s, server: %s, local: %s, network: %s, tls: %s\n", m.Type, m.Connection.Status, m.Connection.ServerName, m.Connection.LocalAddr, m.Connection.Network, m.Connection.TLSVersionToString())

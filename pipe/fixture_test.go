@@ -16,9 +16,9 @@ type fixtureAPIMock struct {
 	sync.Mutex
 }
 
-func (m *fixtureAPIMock) Fixture(lang uof.Lang, eventURN uof.URN) ([]byte, error) {
+func (m *fixtureAPIMock) Fixture(lang uof.Lang, eventURN uof.URN) (uof.Fixture, error) {
 	m.eventURN = eventURN
-	return nil, nil
+	return uof.Fixture{}, nil
 }
 
 func (m *fixtureAPIMock) Fixtures(lang uof.Lang, to time.Time) (<-chan uof.Fixture, <-chan error) {
@@ -30,6 +30,15 @@ func (m *fixtureAPIMock) Fixtures(lang uof.Lang, to time.Time) (<-chan uof.Fixtu
 		close(errc)
 	}()
 	return out, errc
+}
+
+func (m *fixtureAPIMock) FixtureBytes(lang uof.Lang, eventURN uof.URN) ([]byte, error) {
+	m.eventURN = eventURN
+	return nil, nil
+}
+
+func (m *fixtureAPIMock) DailySchedule(lang uof.Lang, date string) ([]uof.Fixture, error) {
+	return nil, nil
 }
 
 func TestFixturePipe(t *testing.T) {

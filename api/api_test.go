@@ -23,7 +23,8 @@ const EnvToken = "UOF_TOKEN"
 // this test depends on UOF_TOKEN environment variable
 // to be set to the staging access token
 // run it as:
-//    UOF_TOKEN=my-token go test -v
+//
+//	UOF_TOKEN=my-token go test -v
 func TestIntegration(t *testing.T) {
 	token, ok := os.LookupEnv(EnvToken)
 	if !ok {
@@ -92,7 +93,7 @@ func testMarketVariant(t *testing.T, a *API) {
 
 func testFixture(t *testing.T, a *API) {
 	lang := uof.LangEN
-	f, err := a.Fixture(lang, "sr:match:8696826")
+	f, err := a.FixtureBytes(lang, "sr:match:8696826")
 	assert.NoError(t, err)
 	assert.NotEqual(t, 0, len(f))
 	assert.NotEqual(t, -1, bytes.Index(f, []byte("sr:match:8696826")))

@@ -67,3 +67,21 @@ func (m *MapCache[K, V]) cleanUpExpiredEntries() {
 		}
 	}
 }
+
+func (m *MapCache[K, V]) ToMap() map[K]*V {
+	m.RLock()
+	defer m.RUnlock()
+	return m.data
+}
+
+func (m *MapCache[K, V]) ToCloneMap() map[K]V {
+	m.RLock()
+	defer m.RUnlock()
+	clone := make(map[K]V)
+	for k, v := range m.data {
+		if v != nil {
+			clone[k] = *v
+		}
+	}
+	return clone
+}

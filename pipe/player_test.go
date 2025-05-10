@@ -1,7 +1,7 @@
 package pipe
 
 import (
-	"io/ioutil"
+	"os"
 	"sync"
 	"testing"
 
@@ -23,7 +23,7 @@ func (m *playerAPIMock) Player(lang uof.Lang, playerID int) (*uof.Player, error)
 
 func TestPlayerPipe(t *testing.T) {
 	a := &playerAPIMock{requests: make(map[int]struct{})}
-	p := Player(a, []uof.Lang{uof.LangEN, uof.LangDE})
+	p := Player(a, []uof.Lang{uof.LangEN, uof.LangDE}, false)
 	assert.NotNil(t, p)
 
 	in := make(chan *uof.Message)
@@ -50,7 +50,7 @@ func TestPlayerPipe(t *testing.T) {
 }
 
 func oddsChangeMessage(t *testing.T) *uof.Message {
-	buf, err := ioutil.ReadFile("../testdata/odds_change-0.xml")
+	buf, err := os.ReadFile("../testdata/odds_change-0.xml")
 	assert.NoError(t, err)
 	m, err := uof.NewQueueMessage("hi.pre.-.odds_change.1.sr:match.1234.-", buf)
 	assert.NoError(t, err)

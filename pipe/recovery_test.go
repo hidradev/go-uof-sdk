@@ -11,17 +11,19 @@ type requestRecoveryParams struct {
 	producer  uof.Producer
 	timestamp int
 	requestID int
+	nodeID    int
 }
 
 type recoveryAPIMock struct {
 	calls chan requestRecoveryParams
 }
 
-func (m *recoveryAPIMock) RequestRecovery(producer uof.Producer, timestamp int, requestID int) error {
+func (m *recoveryAPIMock) RequestRecovery(producer uof.Producer, timestamp int, requestID int, nodeID int) error {
 	m.calls <- requestRecoveryParams{
 		producer:  producer,
 		timestamp: timestamp,
 		requestID: requestID,
+		nodeID:    nodeID,
 	}
 	return nil
 }
@@ -45,8 +47,8 @@ func TestRecoveryStateMachine(t *testing.T) {
 	var ps uof.ProducersChange
 	ps.Add(uof.ProducerPrematch, timestamp)
 	ps.Add(uof.ProducerLiveOdds, timestamp+1)
-	m := &recoveryAPIMock{calls: make(chan requestRecoveryParams, 16)}
-	r := newRecovery(m, ps)
+	recoveryAPI := &recoveryAPIMock{calls: make(chan requestRecoveryParams, 16)}
+	r := newRecovery(recoveryAPI, ps, 900)
 
 	// 0. initilay all producers are down
 	for _, p := range r.producers {
@@ -60,8 +62,8 @@ func TestRecoveryStateMachine(t *testing.T) {
 		assert.Equal(t, uof.ProducerStatusInRecovery, p.status)
 	}
 	// two recovery requests are sent
-	recoveryRequestPrematch := <-m.calls
-	recoveryRequestLive := <-m.calls
+	recoveryRequestPrematch := <-recoveryAPI.calls
+	recoveryRequestLive := <-recoveryAPI.calls
 	if recoveryRequestPrematch.producer == uof.ProducerLiveOdds {
 		// reorder because order is not guaranteed (called in goroutines)
 		recoveryRequestPrematch, recoveryRequestLive = recoveryRequestLive, recoveryRequestPrematch
@@ -94,7 +96,7 @@ func TestRecoveryStateMachine(t *testing.T) {
 	assert.Equal(t, uof.ProducerStatusActive, prematch.status)
 	r.alive(uof.ProducerPrematch, timestamp+3, 0)
 	assert.Equal(t, uof.ProducerStatusInRecovery, prematch.status)
-	recoveryRequestPrematch = <-m.calls
+	recoveryRequestPrematch = <-recoveryAPI.calls
 	assert.Equal(t, uof.ProducerPrematch, recoveryRequestPrematch.producer)
 	assert.Equal(t, timestamp+2, recoveryRequestPrematch.timestamp)
 	assert.Equal(t, prematch.requestID, recoveryRequestPrematch.requestID)
@@ -118,7 +120,7 @@ func TestRecoveryRequests(t *testing.T) {
 	ps.Add(uof.ProducerLiveOdds, timestamp+1)
 
 	m := &recoveryAPIMock{calls: make(chan requestRecoveryParams, 16)}
-	r := newRecovery(m, ps)
+	r := newRecovery(m, ps, 900)
 	in := make(chan *uof.Message)
 	out := make(chan *uof.Message, 16)
 	errc := make(chan error, 16)
