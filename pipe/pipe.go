@@ -9,7 +9,7 @@ import (
 
 // Number of concurrent api calls of one type. For example: no more than x
 // running Player api calls in any point in time.
-const ConcurrentAPICallsLimit = 33
+const ConcurrentAPICallsLimit = 16
 
 // What is a pipeline?
 // There's no formal definition of a pipeline in Go; it's just one of many kinds
