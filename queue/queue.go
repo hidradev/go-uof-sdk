@@ -89,8 +89,8 @@ type ConnectionInfo struct {
 }
 
 func (c *Connection) Listen() (<-chan *uof.Message, <-chan error) {
-	out := make(chan *uof.Message)
-	errc := make(chan error)
+	out := make(chan *uof.Message, 1000)
+	errc := make(chan error, 1000)
 	go func() {
 		defer close(out)
 		defer close(errc)
