@@ -66,7 +66,7 @@ func Run(parentCtx context.Context, options ...Option) error {
 	if !c.PipelineDisabled {
 		stages = append(stages,
 			pipe.Markets(apiConn, c.Languages),
-			pipe.Fixture(apiConn, c.Languages, c.Fixtures),
+			pipe.Fixture(apiConn, c.Languages, c.Fixtures, true),
 			pipe.Player(apiConn, c.Languages, c.ConcurrentAPIFetch),
 			pipe.BetStop(),
 		)

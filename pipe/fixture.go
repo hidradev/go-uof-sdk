@@ -22,11 +22,15 @@ type fixture struct {
 	out       chan<- *uof.Message
 	preloadTo time.Time
 	subProcs  *sync.WaitGroup
+
+	fetchInterval time.Duration
+	prefetchDay   int
+
 	rateLimit chan struct{}
 	sync.Mutex
 }
 
-func Fixture(api fixtureAPI, languages []uof.Lang, preloadTo time.Time) InnerStage {
+func Fixture(api fixtureAPI, languages []uof.Lang, preloadTo time.Time, fetchLooping bool) InnerStage {
 	f := &fixture{
 		api:       api,
 		languages: languages,
@@ -35,8 +39,49 @@ func Fixture(api fixtureAPI, languages []uof.Lang, preloadTo time.Time) InnerSta
 		subProcs:  &sync.WaitGroup{},
 		rateLimit: make(chan struct{}, ConcurrentAPICallsLimit),
 		preloadTo: preloadTo,
+		// 1d
+		fetchInterval: time.Hour * 24,
+		prefetchDay:   3,
 	}
+
+	if fetchLooping {
+		// looping on 1d interval (00:00:00)
+		go func() {
+			for {
+				now := time.Now()
+				next := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+				if now.After(next) {
+					next = next.AddDate(0, 0, 1)
+				}
+
+				// wait until next day
+				time.Sleep(next.Sub(now))
+
+				f.fetchFixtures()
+			}
+		}()
+	}
+
 	return StageWithSubProcessesSync(f.loop)
+}
+
+// 주기적으로 현재 시점 기준 +3일 이벤트를 가져오는 메소드
+func (f *fixture) fetchFixtures() {
+	day := time.Now().AddDate(0, 0, f.prefetchDay)
+
+	for _, lang := range f.languages {
+		fixtures, errc := f.api.Fixtures(lang, day)
+
+		go func() {
+			for err := range errc {
+				f.errc <- err
+			}
+		}()
+
+		for fixture := range fixtures {
+			f.em.insert(uof.UIDWithLang(fixture.URN.EventID(), lang))
+		}
+	}
 }
 
 // 여기서 주의해야 할 사항:
