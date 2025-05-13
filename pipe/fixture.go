@@ -30,7 +30,7 @@ func Fixture(api fixtureAPI, languages []uof.Lang, preloadTo time.Time) InnerSta
 	f := &fixture{
 		api:       api,
 		languages: languages,
-		em:        newExpireMap(time.Second * 30),
+		em:        newExpireMap(time.Hour * 12),
 		//requests:  make(map[string]time.Time),
 		subProcs:  &sync.WaitGroup{},
 		rateLimit: make(chan struct{}, ConcurrentAPICallsLimit),
@@ -39,13 +39,13 @@ func Fixture(api fixtureAPI, languages []uof.Lang, preloadTo time.Time) InnerSta
 	return StageWithSubProcessesSync(f.loop)
 }
 
-// Na sto sve pazim ovdje:
-//   - na pocetku napravim preload
-//   - za vrijeme preload-a ne pokrecem pojedinacne
-//   - za vrijeme preload-a za zaustavljam lanaca, saljem dalje in -> out
-//   - nakon sto zavrsi preload napravim one koje preload nije ubacio
-//   - ne radim request cesce od svakih x (bitno za replay, da ne proizvedem puno requesta)
-//   - kada radim scenario replay htio bi da samo jednom opali, dok je neki in process da na pokrece isti
+// 여기서 주의해야 할 사항:
+//   - 시작 시 preload를 수행합니다.
+//   - preload 중에는 개별적으로 실행하지 않습니다.
+//   - preload 중에는 체인을 중단하지 않고, in에서 out으로 계속 전송합니다.
+//   - preload가 완료된 후 preload에 포함되지 않은 항목을 만듭니다.
+//   - x초보다 자주 요청하지 않습니다 (재생 시 많은 요청을 생성하지 않도록 중요합니다).
+//   - 시나리오 재생 시, 일부가 처리 중일 때는 동일한 것을 시작하지 않고 한 번만 실행되기를 원합니다.
 func (f *fixture) loop(in <-chan *uof.Message, out chan<- *uof.Message, errc chan<- error) *sync.WaitGroup {
 	f.errc, f.out = errc, out
 
