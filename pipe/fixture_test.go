@@ -43,8 +43,7 @@ func (m *fixtureAPIMock) DailySchedule(lang uof.Lang, date string) ([]uof.Fixtur
 
 func TestFixturePipe(t *testing.T) {
 	a := &fixtureAPIMock{}
-	preloadTo := time.Now().Add(time.Hour)
-	f := Fixture(a, []uof.Lang{uof.LangEN, uof.LangDE}, preloadTo, false)
+	f := Fixture(a, []uof.Lang{uof.LangEN, uof.LangDE}, 3)
 	assert.NotNil(t, f)
 
 	in := make(chan *uof.Message)
@@ -65,7 +64,6 @@ func TestFixturePipe(t *testing.T) {
 	for range out {
 	}
 
-	assert.Equal(t, preloadTo, a.preloadTo)
 	assert.Equal(t, a.eventURN, m.FixtureChange.EventURN)
 }
 
