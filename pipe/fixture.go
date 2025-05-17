@@ -22,6 +22,7 @@ type fixture struct {
 	out       chan<- *uof.Message
 	subProcs  *sync.WaitGroup
 
+	lastFetchedAt time.Time
 	fetchInterval time.Duration
 	prefetchDay   int
 
@@ -83,6 +84,12 @@ func (f *fixture) eventURN(m *uof.Message) uof.URN {
 
 // returns list of fixture changes urns appeared in 'in' during preload
 func (f *fixture) preloadLoop(in <-chan *uof.Message) []uof.URN {
+	// check if lastFetchedAt is older than N day returning empty list
+	if time.Since(f.lastFetchedAt) < time.Hour*24*time.Duration(f.prefetchDay) {
+		return []uof.URN{}
+	}
+
+	f.lastFetchedAt = time.Now()
 	done := make(chan struct{})
 
 	f.subProcs.Add(1)
