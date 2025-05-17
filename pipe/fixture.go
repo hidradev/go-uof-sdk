@@ -29,7 +29,7 @@ type fixture struct {
 	sync.Mutex
 }
 
-func Fixture(api fixtureAPI, languages []uof.Lang, preloadTo time.Time, fetchLooping bool) InnerStage {
+func Fixture(api fixtureAPI, languages []uof.Lang, prefetchDay int) InnerStage {
 	f := &fixture{
 		api:       api,
 		languages: languages,
@@ -39,7 +39,7 @@ func Fixture(api fixtureAPI, languages []uof.Lang, preloadTo time.Time, fetchLoo
 		rateLimit: make(chan struct{}, ConcurrentAPICallsLimit),
 		// 1d
 		fetchInterval: time.Hour * 24,
-		prefetchDay:   3,
+		prefetchDay:   prefetchDay,
 	}
 
 	return StageWithSubProcessesSync(f.loop)

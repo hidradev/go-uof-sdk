@@ -2,7 +2,6 @@ package sdk
 
 import (
 	"context"
-	"time"
 
 	"github.com/hidradev/go-uof-sdk"
 	"github.com/hidradev/go-uof-sdk/api"
@@ -28,7 +27,7 @@ type Config struct {
 	ConcurrentAPIFetch bool
 	AutoAckDisabled    bool
 	PipelineDisabled   bool
-	Fixtures           time.Time
+	Fixtures           int
 	Recovery           []uof.ProducerChange
 	Stages             []pipe.InnerStage
 	Replay             func(*api.ReplayAPI) error
@@ -66,7 +65,7 @@ func Run(parentCtx context.Context, options ...Option) error {
 	if !c.PipelineDisabled {
 		stages = append(stages,
 			pipe.Markets(apiConn, c.Languages),
-			pipe.Fixture(apiConn, c.Languages, c.Fixtures, true),
+			pipe.Fixture(apiConn, c.Languages, c.Fixtures),
 			pipe.Player(apiConn, c.Languages, c.ConcurrentAPIFetch),
 			pipe.BetStop(),
 		)
@@ -271,9 +270,9 @@ func Recovery(pc []uof.ProducerChange) Option {
 // calls required during recovery.
 //
 // Ref: https://docs.betradar.com/display/BD/UOF+-+Fixtures+in+the+API
-func Fixtures(to time.Time) Option {
+func Fixtures(prefetchDay int) Option {
 	return func(c *Config) {
-		c.Fixtures = to
+		c.Fixtures = prefetchDay
 	}
 }
 
